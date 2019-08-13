@@ -1,3 +1,7 @@
+#include <LiquidCrystal_I2C.h>
+#include <Wire.h>
+
+LiquidCrystal_I2C lcd(0x27 , 16, 2);
 /*
  # This sample code is used to test the pH meter V1.0.
  # Editor : YouYou
@@ -13,35 +17,7 @@
 #define ArrayLenth  40    //times of collection
 int pHArray[ArrayLenth];   //Store the average value of the sensor feedback
 int pHArrayIndex=0;
-void setup(void)
-{
-  pinMode(LED,OUTPUT);
-  Serial.begin(9600);
-  Serial.println("pH meter experiment!");    //Test the serial monitor
-}
-void loop(void)
-{
-  static unsigned long samplingTime = millis();
-  static unsigned long printTime = millis();
-  static float pHValue,voltage;
-  if(millis()-samplingTime > samplingInterval)
-  {
-      pHArray[pHArrayIndex++]=analogRead(SensorPin);
-      if(pHArrayIndex==ArrayLenth)pHArrayIndex=0;
-      voltage = avergearray(pHArray, ArrayLenth)*5.0/1024;
-      pHValue = 3.5*voltage+Offset;
-      samplingTime=millis();
-  }
-  if(millis() - printTime > printInterval)   //Every 800 milliseconds, print a numerical, convert the state of the LED indicator
-  {
-    Serial.print("Voltage:");
-        Serial.print(voltage,2);
-        Serial.print("    pH value: ");
-    Serial.println(pHValue,2);
-        digitalWrite(LED,digitalRead(LED)^1);
-        printTime=millis();
-  }
-}
+
 double avergearray(int* arr, int number){
   int i;
   int max,min;
@@ -81,3 +57,37 @@ double avergearray(int* arr, int number){
   }//if
   return avg;
 }
+void setup()
+{
+   lcd.clear();
+    lcd.init();
+    lcd.backlight();
+  pinMode(LED,OUTPUT);
+  Serial.begin(9600);
+  Serial.println("pH meter experiment!");    //Test the serial monitor
+}
+void loop()
+{
+  static unsigned long samplingTime = millis();
+  static unsigned long printTime = millis();
+  static float pHValue,voltage;
+  if(millis()-samplingTime > samplingInterval)
+  {
+      pHArray[pHArrayIndex++]=analogRead(SensorPin);
+      if(pHArrayIndex==ArrayLenth)pHArrayIndex=0;
+      voltage = avergearray(pHArray, ArrayLenth)*5.0/1024;
+      pHValue = 3.5*voltage+Offset;
+      samplingTime=millis();
+  }
+  if(millis() - printTime > printInterval)   //Every 800 milliseconds, print a numerical, convert the state of the LED indicator
+  
+    lcd.backlight();
+    lcd.setCursor(0,0);
+    lcd.print("Voltage:");
+    lcd.print(voltage,2);
+    lcd.setCursor(0,1);
+    lcd.print("pH value: ");
+    lcd.println(pHValue,2);
+    digitalWrite(LED,digitalRead(LED)^1);
+    printTime=millis();
+  }
