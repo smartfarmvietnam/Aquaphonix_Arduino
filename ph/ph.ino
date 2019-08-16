@@ -63,7 +63,7 @@ void setup()
     lcd.init();
     lcd.backlight();
   pinMode(LED,OUTPUT);
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("pH meter experiment!");    //Test the serial monitor
 }
 void loop()
@@ -85,9 +85,13 @@ void loop()
     lcd.setCursor(0,0);
     lcd.print("Voltage:");
     lcd.print(voltage,2);
+    Serial.print("Voltage:");
+    Serial.print(voltage,2);
     lcd.setCursor(0,1);
-    lcd.print("pH value: ");
+    lcd.print("pH value:");
     lcd.println(pHValue,2);
+    Serial.print("pH value:");
+    Serial.println(pHValue,2);
     digitalWrite(LED,digitalRead(LED)^1);
     printTime=millis();
   }
